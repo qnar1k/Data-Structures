@@ -65,24 +65,3 @@ public:
         cout << "nullptr" << endl;
     }
 };
-
-int main() {
-    try {
-        Stack<int> s;
-        s.push(1);
-        s.push(3);
-        s.push(5);
-        s.push(8);
-        s.push(9);
-        s.display(); // 9 -> 8 -> 5 -> 3 -> 1 -> nullptr
-
-        cout << "Top element: " << s.peek() << endl; // Top element: 9
-        s.pop();
-        s.display(); // 8 -> 5 -> 3 -> 1 -> nullptr
-        cout << "Stack size: " << s.size() << endl; // Stack size: 4
-    }
-    catch (const exception& e) {
-        cerr << e.what() << endl;
-    }
-    return 0;
-}
