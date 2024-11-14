@@ -69,22 +69,3 @@ public:
         cout << "nullptr" << endl; 
     }
 };
-
-int main()
-{
-    try {
-        Queue<int> q; 
-        q.enqueue(1);
-        q.enqueue(3);
-        q.enqueue(5);
-        q.enqueue(8);
-        q.enqueue(9);
-        q.display(); // 1 -> 3 -> 5 -> 8 -> 9 -> nullptr (FIFO order)
-        cout << "Front element: " << q.peek() << endl; // Front element: 1
-        q.dequeue();
-        q.display(); // 3 -> 5 -> 8 -> 9 -> nullptr (FIFO order)
-        cout << "Queue size: " << q.size() << endl; // Queue size: 4
-    } catch (const exception& e) {
-        cerr << e.what() << endl;
-    }
-}
