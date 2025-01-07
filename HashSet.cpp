@@ -1,90 +1,56 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include <functional>
+using namespace std;
 
 class HashSet {
 private:
-    static const int DEFAULT_CAPACITY = 10;
-    static constexpr float LOAD_FACTOR = 0.75;
-
-    std::vector<std::list<int>> table;
-    int size;
-
-    int hash(int value) const {
-        return std::hash<int>()(value) % table.size();
-    }
-
-    void rehash() {
-        std::vector<std::list<int>> oldTable = table;
-        table.resize(table.size() * 2);
-        for (auto& bucket : table) {
-            bucket.clear();
-        }
-        size = 0;
-
-        for (const auto& bucket : oldTable) {
-            for (int value : bucket) {
-                add(value);
-            }
-        }
+    vector<list<int>> table; // Hash table: vector of lists
+    int capacity;            // Number of buckets
+    int hash(int key) const {
+        return key % capacity; // Simple hash function (modulus)
     }
 
 public:
-    HashSet() : table(DEFAULT_CAPACITY), size(0) {}
+    // Constructor: initialize hash table with a fixed capacity
+    HashSet(int cap = 10) : capacity(cap), table(cap) {}
 
-    void add(int value) {
-        int index = hash(value);
-        auto& bucket = table[index];
-
-        for (int existingValue : bucket) {
-            if (existingValue == value) {
-                return; // Element already exists
+    // Insert a key into the HashSet
+    void insert(int key) {
+        int index = hash(key); // Get the bucket index
+        for (int element : table[index]) {
+            if (element == key) {
+                return; // Key already exists, no duplicates allowed
             }
         }
-
-        bucket.push_back(value);
-        ++size;
-
-        if (size > LOAD_FACTOR * table.size()) {
-            rehash();
-        }
+        table[index].push_back(key); // Add key to the bucket
     }
 
-    bool contains(int value) const {
-        int index = hash(value);
-        const auto& bucket = table[index];
-
-        for (int existingValue : bucket) {
-            if (existingValue == value) {
-                return true;
-            }
-        }
-        return false;
+    // Remove a key from the HashSet
+    void remove(int key) {
+        int index = hash(key); // Get the bucket index
+        table[index].remove(key); // Remove the key from the list
     }
 
-    void remove(int value) {
-        int index = hash(value);
-        auto& bucket = table[index];
-
-        for (auto it = bucket.begin(); it != bucket.end(); ++it) {
-            if (*it == value) {
-                bucket.erase(it);
-                --size;
-                return;
+    // Check if a key exists in the HashSet
+    bool contains(int key) const {
+        int index = hash(key); // Get the bucket index
+        for (int element : table[index]) {
+            if (element == key) {
+                return true; // Key found
             }
         }
+        return false; // Key not found
     }
 
-    void printSet() const {
-        for (size_t i = 0; i < table.size(); ++i) {
-            if (!table[i].empty()) {
-                std::cout << "Bucket " << i << ": ";
-                for (int value : table[i]) {
-                    std::cout << value << " ";
-                }
-                std::cout << "\n";
+    // Print the HashSet
+    void print() const {
+        for (int i = 0; i < capacity; ++i) {
+            cout << "Bucket " << i << ": ";
+            for (int element : table[i]) {
+                cout << element << " ";
             }
+            cout << endl;
         }
     }
 };
@@ -92,20 +58,21 @@ public:
 int main() {
     HashSet hashSet;
 
-    hashSet.add(5);
-    hashSet.add(10);
-    hashSet.add(15);
-    hashSet.add(20);
+    hashSet.insert(10);
+    hashSet.insert(20);
+    hashSet.insert(15);
+    hashSet.insert(25);
+    hashSet.insert(35);
 
-    std::cout << "Set after adding elements:\n";
-    hashSet.printSet();
+    cout << "HashSet contents after insertion:" << endl;
+    hashSet.print();
 
-    std::cout << "Contains 10? " << (hashSet.contains(10) ? "Yes" : "No") << "\n";
-    std::cout << "Contains 25? " << (hashSet.contains(25) ? "Yes" : "No") << "\n";
+    cout << "\nDoes HashSet contain 15? " << (hashSet.contains(15) ? "Yes" : "No") << endl;
+    cout << "Does HashSet contain 40? " << (hashSet.contains(40) ? "Yes" : "No") << endl;
 
-    hashSet.remove(10);
-    std::cout << "Set after removing 10:\n";
-    hashSet.printSet();
+    hashSet.remove(15);
+    cout << "\nHashSet contents after removing 15:" << endl;
+    hashSet.print();
 
     return 0;
 }
